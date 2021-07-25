@@ -23,7 +23,8 @@ suspend fun main() = Korge(width = 512, height = 512, bgcolor = Colors["#2b2b2b"
     val rootSceneContainer = sceneContainer()
 
     rootSceneContainer.changeTo<RpgIngameScene>(
-        transition = MaskTransition(transition = TransitionFilter.Transition.CIRCULAR, reversed = false, smooth = true),
+        //transition = MaskTransition(transition = TransitionFilter.Transition.CIRCULAR, reversed = false, smooth = true),
+		transition = AlphaTransition,
         time = 0.5.seconds
     )
 }
@@ -36,6 +37,8 @@ class RpgIngameScene : Scene() {
     override suspend fun Container.sceneInit() {
 
         val sw = Stopwatch().start()
+
+		println("start resources loading...")
 
         tilemap = resourcesVfs["BasicTilemap/untitled.tmx"].readTiledMap(atlas = atlas)
         characters = resourcesVfs["vampire.ase"].readImageDataContainer(ASE, atlas = atlas)
