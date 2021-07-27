@@ -2,7 +2,7 @@
 
 <https://korlibs.github.io/korge-starter-kit-rpg/>
 
-![](./screenshot.png)
+[![](./screenshot.png)](https://korlibs.github.io/korge-starter-kit-rpg/)
 
 ## Credits
 
