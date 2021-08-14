@@ -17,14 +17,14 @@ import com.soywiz.korio.file.std.*
 import com.soywiz.korma.geom.*
 import com.soywiz.korma.interpolation.*
 
-suspend fun main() = Korge(width = 512, height = 512, bgcolor = Colors["#2b2b2b"]) {
+suspend fun main() = Korge(width = 800, height = 600, virtualWidth = 512, virtualHeight = 512, bgcolor = Colors["#2b2b2b"]) {
     injector.mapPrototype { RpgIngameScene() }
 
     val rootSceneContainer = sceneContainer()
 
     rootSceneContainer.changeTo<RpgIngameScene>(
-        //transition = MaskTransition(transition = TransitionFilter.Transition.CIRCULAR, reversed = false, smooth = true),
-		transition = AlphaTransition,
+        transition = MaskTransition(transition = TransitionFilter.Transition.CIRCULAR, reversed = false, smooth = true, filtering = true),
+		//transition = AlphaTransition,
         time = 0.5.seconds
     )
 }
@@ -60,6 +60,7 @@ class RpgIngameScene : Scene() {
                 }
             ) {
                 tiledMapView = tiledMapView(tilemap, smoothing = false, showShapes = false)
+				tiledMapView.filter = IdentityFilter(false)
 
                 println("tiledMapView[\"start\"]=${tiledMapView["start"].firstOrNull}")
                 val npcs = tiledMapView.tiledMap.data.getObjectByType("npc")
