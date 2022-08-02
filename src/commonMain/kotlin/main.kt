@@ -13,6 +13,7 @@ import com.soywiz.korge.view.tween.*
 import com.soywiz.korim.atlas.*
 import com.soywiz.korim.color.*
 import com.soywiz.korim.format.*
+import com.soywiz.korim.tiles.tiled.*
 import com.soywiz.korio.file.std.*
 import com.soywiz.korma.geom.*
 import com.soywiz.korma.interpolation.*
@@ -23,7 +24,7 @@ suspend fun main() = Korge(width = 800, height = 600, virtualWidth = 512, virtua
     val rootSceneContainer = sceneContainer()
 
     rootSceneContainer.changeTo<RpgIngameScene>(
-        transition = MaskTransition(transition = TransitionFilter.Transition.CIRCULAR, reversed = false, smooth = true, filtering = true),
+        transition = MaskTransition(transition = TransitionFilter.Transition.CIRCULAR, reversed = false, filtering = true),
 		//transition = AlphaTransition,
         time = 0.5.seconds
     )
@@ -34,19 +35,19 @@ class RpgIngameScene : Scene() {
     lateinit var tilemap: TiledMap
     lateinit var characters: ImageDataContainer
 
-    override suspend fun Container.sceneInit() {
+    override suspend fun SContainer.sceneInit() {
 
         val sw = Stopwatch().start()
 
 		println("start resources loading...")
 
         tilemap = resourcesVfs["BasicTilemap/untitled.tmx"].readTiledMap(atlas = atlas)
-        characters = resourcesVfs["vampire.ase"].readImageDataContainer(ASE, atlas = atlas)
+        characters = resourcesVfs["vampire.ase"].readImageDataContainer(ASE.toProps(), atlas = atlas)
 
         println("loaded resources in ${sw.elapsed}")
     }
 
-    override suspend fun Container.sceneMain() {
+    override suspend fun SContainer.sceneMain() {
         container {
             scale(2.0)
 
