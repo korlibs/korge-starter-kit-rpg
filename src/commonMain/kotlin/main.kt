@@ -1,24 +1,23 @@
-import com.soywiz.klock.*
-import com.soywiz.korev.*
-import com.soywiz.korge.*
-import com.soywiz.korge.component.docking.*
-import com.soywiz.korge.scene.*
-import com.soywiz.korge.tiled.*
-import com.soywiz.korge.tween.*
-import com.soywiz.korge.view.*
-import com.soywiz.korge.view.animation.*
-import com.soywiz.korge.view.camera.*
-import com.soywiz.korge.view.filter.*
-import com.soywiz.korge.view.tween.*
-import com.soywiz.korim.atlas.*
-import com.soywiz.korim.color.*
-import com.soywiz.korim.format.*
-import com.soywiz.korim.tiles.tiled.*
-import com.soywiz.korio.file.std.*
-import com.soywiz.korma.geom.*
-import com.soywiz.korma.interpolation.*
+import korlibs.datastructure.iterators.*
+import korlibs.event.*
+import korlibs.image.atlas.*
+import korlibs.image.color.*
+import korlibs.image.format.*
+import korlibs.image.tiles.tiled.*
+import korlibs.io.file.std.*
+import korlibs.korge.*
+import korlibs.korge.scene.*
+import korlibs.korge.tiled.*
+import korlibs.korge.view.*
+import korlibs.korge.view.animation.*
+import korlibs.korge.view.camera.*
+import korlibs.korge.view.collision.*
+import korlibs.korge.view.filter.*
+import korlibs.math.geom.*
+import korlibs.math.geom.collider.*
+import korlibs.time.*
 
-suspend fun main() = Korge(width = 800, height = 600, virtualWidth = 512, virtualHeight = 512, bgcolor = Colors["#2b2b2b"]) {
+suspend fun main() = Korge(windowSize = Size(800, 600), virtualSize = Size(512, 512), backgroundColor = Colors["#2b2b2b"]) {
     injector.mapPrototype { RpgIngameScene() }
 
     val rootSceneContainer = sceneContainer()
@@ -55,7 +54,7 @@ class RpgIngameScene : Scene() {
             lateinit var tiledMapView: TiledMapView
 
             val cameraContainer = cameraContainer(
-                256.0, 256.0, clip = true,
+                Size(256, 256), clip = true,
                 block = {
                     clampToBounds = true
                 }
@@ -69,7 +68,7 @@ class RpgIngameScene : Scene() {
                     println("- obj = $obj")
                 }
                 println("NPCS=$npcs")
-                println(tiledMapView.firstDescendantWith { it.getPropString("type") == "start" })
+                println(tiledMapView.firstDescendantWith { it.getTiledPropString("type") == "start" })
                 val startPos = tiledMapView["start"].firstOrNull?.pos ?: Point(50, 50)
                 val charactersLayer = tiledMapView["characters"].first as Container
 
@@ -93,7 +92,7 @@ class RpgIngameScene : Scene() {
                     }
             }
 
-            cameraContainer.cameraViewportBounds.copyFrom(tiledMapView.getLocalBoundsOptimized())
+            cameraContainer.cameraViewportBounds = tiledMapView.getLocalBounds()
 
             stage!!.controlWithKeyboard(character, tiledMapView)
 
@@ -105,12 +104,12 @@ class RpgIngameScene : Scene() {
 }
 
 fun Stage.controlWithKeyboard(
-	char: ImageDataView,
-	collider: HitTestable,
-	up: Key = Key.UP,
-	right: Key = Key.RIGHT,
-	down: Key = Key.DOWN,
-	left: Key = Key.LEFT,
+    char: ImageDataView,
+    collider: HitTestable,
+    up: Key = Key.UP,
+    right: Key = Key.RIGHT,
+    down: Key = Key.DOWN,
+    left: Key = Key.LEFT,
 ) {
 	addUpdater { dt ->
 		val speed = 2.0 * (dt / 16.0.milliseconds)
@@ -126,7 +125,7 @@ fun Stage.controlWithKeyboard(
 		if (pressingDown) dy = +1.0
 		if (dx != 0.0 || dy != 0.0) {
 			val dpos = Point(dx, dy).normalized * speed
-			char.moveWithHitTestable(collider, dpos.x, dpos.y)
+			char.moveWithHitTestable(collider, dpos.xD, dpos.yD)
 		}
 		char.animation = when {
 			pressingLeft -> "left"
@@ -142,4 +141,10 @@ fun Stage.controlWithKeyboard(
 			char.rewind()
 		}
 	}
+}
+
+private fun Container.keepChildrenSortedByY() {
+    addUpdater {
+        children.fastForEach { it.zIndex = y }
+    }
 }

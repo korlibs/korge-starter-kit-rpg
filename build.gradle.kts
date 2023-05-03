@@ -1,4 +1,4 @@
-import com.soywiz.korge.gradle.*
+import korlibs.korge.gradle.*
 
 plugins {
 	alias(libs.plugins.korge)
@@ -20,6 +20,11 @@ korge {
 	targetJs()
 	targetDesktop()
 	targetIos()
-	targetAndroidIndirect() // targetAndroidDirect()
+	targetAndroid() // targetAndroidDirect()
 	//targetAndroidDirect()
 }
+
+dependencies {
+    add("commonMainApi", project(":deps"))
+}
+
