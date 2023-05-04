@@ -87,7 +87,7 @@ class RpgIngameScene : Scene() {
                     }
                 }
                 character =
-                    charactersLayer.imageDataView(characters["vampire"], "right", playing = false, smoothing = false) {
+                    charactersLayer.imageDataView(characters["vampire"], "down", playing = false, smoothing = false) {
                         xy(startPos)
                     }
             }
