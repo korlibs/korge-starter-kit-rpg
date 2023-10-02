@@ -1,3 +1,3 @@
 dependencies:
-- https://github.com/korlibs/korge-tiled/tree/0.0.1/korge-tiled
-- https://github.com/korlibs/korge-ext/tree/0.0.2/korge-collision
+- https://github.com/korlibs/korge-tiled/tree/v0.0.3/korge-tiled::da57a232cf33af7e51560700b95e8e561d720bcb
+- https://github.com/korlibs/korge-ext/tree/0.0.2/korge-collision::7c4c3f6c11cd9d5662a49340a3b0c5dd8b0beaf2
