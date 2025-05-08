@@ -17,14 +17,14 @@ import korlibs.math.geom.*
 import korlibs.math.geom.collider.*
 import korlibs.time.*
 
-suspend fun main() = Korge(windowSize = Size(800, 600), virtualSize = Size(512, 512), backgroundColor = Colors["#2b2b2b"]) {
+suspend fun main() = Korge(windowSize = Size(1280, 720), virtualSize = Size(256, 256), backgroundColor = Colors["#2b2b2b"], displayMode = KorgeDisplayMode.TOP_LEFT_NO_CLIP) {
     injector.mapPrototype { RpgIngameScene() }
 
     val rootSceneContainer = sceneContainer()
 
     rootSceneContainer.changeTo<RpgIngameScene>(
-        transition = MaskTransition(transition = TransitionFilter.Transition.CIRCULAR, reversed = false, filtering = true),
-		//transition = AlphaTransition,
+        //transition = MaskTransition(transition = TransitionFilter.Transition.CIRCULAR, reversed = false, filtering = true),
+		transition = AlphaTransition,
         time = 0.5.seconds
     )
 }
@@ -48,13 +48,11 @@ class RpgIngameScene : Scene() {
 
     override suspend fun SContainer.sceneMain() {
         container {
-            scale(2.0)
-
             lateinit var character: ImageDataView
             lateinit var tiledMapView: TiledMapView
 
             val cameraContainer = cameraContainer(
-                Size(256, 256), clip = true,
+                Size(views.actualVirtualWidth, 256), //clip = true,
                 block = {
                     clampToBounds = true
                 }
@@ -92,6 +90,11 @@ class RpgIngameScene : Scene() {
                     }
             }
 
+            onStageResized { width, height ->
+                cameraContainer.width = views.actualVirtualWidth.toDouble()
+                cameraContainer.height = 256.0
+            }
+
             cameraContainer.cameraViewportBounds = tiledMapView.getLocalBounds()
 
             stage!!.controlWithKeyboard(character, tiledMapView)
@@ -125,7 +128,7 @@ fun Stage.controlWithKeyboard(
 		if (pressingDown) dy = +1.0
 		if (dx != 0.0 || dy != 0.0) {
 			val dpos = Point(dx, dy).normalized * speed
-			char.moveWithHitTestable(collider, dpos.xD, dpos.yD)
+			char.moveWithHitTestable(collider, dpos.x, dpos.y)
 		}
 		char.animation = when {
 			pressingLeft -> "left"
